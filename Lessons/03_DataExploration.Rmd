@@ -89,7 +89,7 @@ Commons functions to import datasets and store as data frames are *read.table()*
 
 * *file = * : use this input to point to your data file. If it's on the same folder as your .Rmd then you only need to write the file name. But if it's on another folder you need to point to the path were file is located;
 * *header =* : if your file has a header you should set this to TRUE, o.w. FALSE;
-* *skip =* : if your file has rows explaining the data or any other rows on the top that need to be skipped you should just set skip to be equal to the number of row that should be skipped before reading the data. Mote that if header=TRUE, you should not skip the row with the header. The defaul is *skip=0*;
+* *skip =* : if your file has rows explaining the data or any other rows on the top that need to be skipped you should just set skip to be equal to the number of row that should be skipped before reading the data. Mote that if header=TRUE, you should not skip the row with the header. The default is *skip=0*;
 * *dec =* : define *dec="."* or *dec=","* depending on how it's defined on your set. The default is ".".
 
 ```{r Importing data}
@@ -100,6 +100,7 @@ Commons functions to import datasets and store as data frames are *read.table()*
 USGS.flow.data <- read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")   
 
 # What happens if we don't assign a name to our imported dataset?
+# the data is not stored, just showed
 #read.csv("./Data/Raw/USGS_Site02085000_Flow_Raw.csv")
 
 # Another option is to choose with your browser
@@ -187,8 +188,8 @@ Formatting of dates in R:
 %y  2-digit year
 %Y  4-digit year
 %a  abbreviated weekday
-%A  unabbreviated weekday
-%b  abbreviated month
+%A  unabbreviated weekday  
+%b  abbreviated month, e.g. Jan
 %B  unabbreviated month
 
 In some cases when dates are provided as integers, you may need to provide an origin for your dates. Beware: the "origin" date for Excel (Windows), Excel (Mac), R, and MATLAB all have different origin dates. Google this if it comes up.
@@ -212,17 +213,17 @@ USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%m/%d/%y")
 Note that for every date prior to 1969, R has assigned the date in the 2000s rather than the 1900s. This can be fixed with an `ifelse` statement inside a function. Run through the code below and write what is happening in the comment above each line.
 
 ```{r Fixing dates}
-# 
-USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d")
 
-#
+USGS.flow.data$datetime <- format(USGS.flow.data$datetime, "%y%m%d")
+# change the format from 2027-10-01 to 271001, remove the wrong 20
+
 create.early.dates <- (function(d) {
        paste0(ifelse(d > 191226,"19","20"),d)
        })
-#
+# paste 19 to the front of the number for the number less than 191226 and otherwise paste 20 
+
 USGS.flow.data$datetime <- create.early.dates(USGS.flow.data$datetime)
 
-#
 USGS.flow.data$datetime <- as.Date(USGS.flow.data$datetime, format = "%Y%m%d") 
 
 ```

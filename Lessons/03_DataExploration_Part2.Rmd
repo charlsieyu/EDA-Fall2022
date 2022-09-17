@@ -132,7 +132,7 @@ ggplot(USGS.flow.data) +
 
 #
 ggplot(USGS.flow.data) +
-  geom_boxplot(aes(x = gage.height.mean, y = discharge.mean, group = cut_width(gage.height.mean, 1)))
+  geom_boxplot(aes(x = gage.height.mean, y = discharge.mean, group = cut_width(gage.height.mean, 1))) # cut_width: like the histogram
 
 #
 ggplot(USGS.flow.data) +
