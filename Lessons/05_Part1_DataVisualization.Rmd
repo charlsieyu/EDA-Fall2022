@@ -26,7 +26,8 @@ Effective data visualization depends on purposeful choices about graph types. Th
 ```{r, message = FALSE, warning = FALSE}
 getwd()
 library(tidyverse)
-#install.packages("ggridges")
+#install.packages("ggridges") 
+# help build ridge plot which shows the distribution of a variable over time
 library(ggridges)
 
 PeterPaul.chem.nutrients <- 
@@ -82,6 +83,7 @@ Here are some commonly used aesthetic types that can be manipulated in ggplot:
 ### Plotting continuous variables over time: Scatterplot and Line Plot
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
+# fix some parameters of the plot window
 # Scatterplot
 ggplot(EPAair, aes(x = Date, y = Ozone)) + 
   geom_point()
@@ -92,8 +94,11 @@ print(O3plot)
 
 # Fix this code
 O3plot2 <- ggplot(EPAair) +
-  geom_point(aes(x = Date, y = Ozone, color = "blue"))
+  geom_point(aes(x = Date, y = Ozone, color = "blue")) 
+  # wrong, adding another axis called blue
+  # the correct one should be geom_point(aes(x = Date, y = Ozone), color = "blue")
 print(O3plot2)
+
 
 # Add additional variables
 # How could you automatically assign a marker color to a variable? 
@@ -115,7 +120,7 @@ PMplot.faceted2 <-
                   Site.Name == "Bryson City"), 
          aes(x = Month, y = PM2.5)) + 
   geom_point() +
-  facet_grid(Site.Name ~ Year) 
+  facet_grid(Site.Name ~ Year) # columns -> year, rows -> site name
 print(PMplot.faceted2)
 
 # Plot true time series with geom_line
@@ -124,8 +129,6 @@ PMplot.line <-
          aes(x = Date, y = PM2.5)) +
   geom_line()
 print(PMplot.line)
-
-
 ```
 
 
@@ -148,16 +151,16 @@ print(lightvsDOfixed)
 
 # Depth in the fields of limnology and oceanography is on a reverse scale
 tempvsdepth <- 
-  ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth)) +
-  #ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth, color = daynum)) +
+  #ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth)) +
+  ggplot(PeterPaul.chem.nutrients, aes(x = temperature_C, y = depth, color = daynum)) +
   geom_point() +
-  scale_y_reverse()
+  scale_y_reverse() # y axis reverse, the value goes from 0 to 20 from the top to bottom
 print(tempvsdepth)
 
 NvsP <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth)) +
   geom_point() +
-  geom_smooth(method = lm) +
+  geom_smooth(method = lm) + # the trend line which is blue here 
   geom_abline(aes(slope = 16, intercept = 0))
 print(NvsP)
 
@@ -172,20 +175,25 @@ What might be more effective ways to display the information? Navigate to the bo
 # Box and whiskers plot
 Nutrientplot3 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
-  geom_boxplot(aes(color = nutrient)) # Why didn't we use "fill"?
+  geom_boxplot(aes(color = nutrient)) 
+  # Why didn't we use "fill"? Not clear, just fill the box
 print(Nutrientplot3)
 
 # Dot plot
 Nutrientplot4 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
   geom_dotplot(aes(color = nutrient, fill = nutrient), binaxis = "y", binwidth = 1, 
-               stackdir = "center", position = "dodge", dotsize = 2) #
+               stackdir = "center", position = "dodge", dotsize = 2) 
+  # binaxis = "y": stack observations over y axis
+  # stackdir = "center": stack points first on center
+  # position = "dodge": observations with same concentration go to the side and not overlay
 print(Nutrientplot4)
+# In this case, I think dotplot performs maybe the same as the boxplot.
 
 # Violin plot
 Nutrientplot5 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration)) +
-  geom_violin(aes(color = nutrient)) #
+  geom_violin(aes(color = nutrient)) 
 print(Nutrientplot5)
 
 # Frequency polygons
@@ -198,12 +206,14 @@ Nutrientplot6 <-
   geom_freqpoly(aes(x = no23), color = "royalblue") +
   geom_freqpoly(aes(x = po4), color = "red") 
 print(Nutrientplot6)
+# cons: one line for each nutrients, no legend, wrong x axis name
 
 # Using a gathered dataset
 Nutrientplot7 <-   
   ggplot(PeterPaul.chem.nutrients.gathered) +
   geom_freqpoly(aes(x = concentration, color = nutrient))
 print(Nutrientplot7)
+# The same plot as the last one but use gather df and don't have those drawbacks
 
 # Frequency polygons have the risk of becoming spaghetti plots. 
 # See <https://www.data-to-viz.com/caveat/spaghetti.html> for more info.
@@ -211,8 +221,8 @@ print(Nutrientplot7)
 # Ridgeline plot
 Nutrientplot6 <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(y = nutrient, x = concentration)) +
-  geom_density_ridges(aes(fill = lakename), alpha = 0.5) #
+  geom_density_ridges(aes(fill = lakename), alpha = 0.5)
 print(Nutrientplot6)
-
+# much better than the previous plot, clear to show frequencies of each nutrients
 
 ```

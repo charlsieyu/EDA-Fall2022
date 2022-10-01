@@ -47,28 +47,28 @@ print(O3plot)
 
 O3plot1 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_gray()
+  theme_gray() # default theme
 print(O3plot1)
 
 O3plot2 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_bw()
+  theme_bw() # classic one, white background, gray lines and black axes
 print(O3plot2)
 
 O3plot3 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_light()
+  theme_light() # gray lines/axes on white background
 print(O3plot3)
 
 O3plot4 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone)) +
-  theme_classic()
+  theme_classic() # same as bw() but without gridlines
 print(O3plot4)
 ```
 
 Notice that some aspects of your graph have not been adjusted, including: 
 
-* text size
+* text size (default font size is 11)
 * axis label colors
 * legend position and justification
 
@@ -76,8 +76,9 @@ If you would like to set a common theme across all plots in your analysis sessio
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 mytheme <- theme_classic(base_size = 14) +
-  theme(axis.text = element_text(color = "black"), 
-        legend.position = "top") #alternative: legend.position + legend.justification
+  theme(axis.text = element_text(color = "black"), # axis text to be black from gray
+        legend.position = "top") 
+  #alternative: legend.position + legend.justification(e.g., right alignment)
 
 # options: call the theme in each plot or set the theme at the start. 
 
@@ -86,7 +87,7 @@ O3plot5 <- ggplot(EPAair) +
   mytheme
 print(O3plot5)  
 
-theme_set(mytheme)
+theme_set(mytheme) # set theme for all subsequent plots
 
 O3plot6 <- ggplot(EPAair) +
   geom_point(aes(x = Date, y = Ozone))
@@ -100,15 +101,18 @@ While the theme allows us to set multiple aspects of plots, ggplot allows us to 
 
 ```{r, fig.height = 3, fig.width = 4, warning = FALSE}
 O3plot7 <- ggplot(EPAair, aes(x = Date, y = Ozone)) +
-  geom_hline(yintercept = 50, lty = 2) +
+  geom_hline(yintercept = 50, lty = 2) + 
+  # horizontal line, lty specify the type of the line
   geom_hline(yintercept = 100, lty = 2) +
-  geom_point(alpha = 0.5, size = 1.5) +
+  geom_point(alpha = 0.5, size = 1.5) + # alpha: transparency of the points
+  # geom_text: add text in the plot, x and y define location, label is the content of text. hjust means horizontal justification, 1 means left/right alignment
   geom_text(x = as.Date("2020-01-01"), y = 45, label = "good", hjust = 1, fontface = "bold") +   # hjust = 1 means left align
   geom_text(x = as.Date("2020-01-01"), y = 95, label = "moderate", hjust = 1, fontface = "bold") +
   geom_text(x = as.Date("2020-01-01"), y = 120, label = "unhealthy (sensitive groups)", hjust = 1, fontface = "bold") +
+  # date_breaks: break by 2 months instead of 6 months in scaling
   scale_x_date(limits = as.Date(c("2018-01-01", "2019-12-31")), 
     date_breaks = "2 months", date_labels = "%b %y") +
-  ylab(expression("O"[3]* " AQI Value")) +
+  ylab(expression("O"[3]* " AQI Value")) + # change y axis name, 3 here is subscript
   theme(axis.text.x = element_text(angle = 45,  hjust = 1))
 print(O3plot7)  
 
@@ -179,11 +183,11 @@ print(NvsP)
 # change your legend labels
 NvsP2 <-
   ggplot(PeterPaul.chem.nutrients, aes(x = tp_ug, y = tn_ug, color = depth, shape = lakename)) +
-  geom_point(alpha = 0.7, size = 2.5) +
-  #labs() + # change your legend labels here
+  geom_point(alpha = 0.7, size = 2.5) + 
+  labs(color="Depth", shape="Lake name") + # change your legend labels here
   scale_shape_manual(values = c(15, 17)) +
-  #scale_color_distiller(palette = "Blues", direction = 1) + # use scale_color_brewer for discrete variables
-  scale_color_viridis(option = "magma", direction = -1) +
+  scale_color_distiller(palette = "Blues", direction = 1) + # use scale_color_brewer for discrete variables
+  #scale_color_viridis(option = "magma", direction = -1) +
   theme(legend.position = "right", 
         legend.text = element_text(size = 12), legend.title = element_text(size = 12))
 print(NvsP2)
@@ -196,10 +200,10 @@ Nutrientplot <-
   ggplot(PeterPaul.chem.nutrients.gathered, aes(x = lakename, y = concentration, color = nutrient)) +
   geom_boxplot() +
 # place your additional edits here
-  scale_y_continuous(expand = c(0, 0)) +
-  #scale_color_brewer(palette = "YlGnBu") +
+  scale_y_continuous(expand = c(0, 0)) + # ??
+  scale_color_brewer(palette = "YlGnBu") +
   #scale_color_manual(values = c("#7fcdbb", "#41b6c4", "#1d91c0", "#225ea8", "#0c2c84")) +
-  #scale_color_viridis(discrete = TRUE, end = 0.8) +
+  #scale_color_viridis(discrete = TRUE, end = 0.8) + # ??
   theme(legend.position = "right")
 print(Nutrientplot)
 ```
